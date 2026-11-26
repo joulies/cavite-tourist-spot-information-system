@@ -10,6 +10,7 @@ import { TouristSpotsModule } from './tourist-spots/tourist-spots.module';
 import { UsersModule } from './users/users.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { PhotosModule } from './photos/photos.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -43,6 +44,8 @@ import { PhotosModule } from './photos/photos.module';
     ReviewsModule,
 
     PhotosModule,
+
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
