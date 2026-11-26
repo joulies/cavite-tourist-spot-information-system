@@ -1,0 +1,18 @@
+$kind: http-request
+name: Create Review
+method: POST
+url: '{{base_url}}/reviews'
+order: 1000
+headers:
+  - key: Authorization
+    value: 'Bearer {{access_token}}'
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "spot_id": 1,
+      "rating": 5,
+      "comment": "Great views and a relaxing place to visit."
+    }

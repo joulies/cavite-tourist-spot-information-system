@@ -1,0 +1,21 @@
+$kind: http-request
+name: Create Tourist Spot
+method: POST
+url: '{{base_url}}/tourist-spots'
+order: 1000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "spot_name": "People's Park in the Sky",
+      "description": "A scenic park in Tagaytay.",
+      "address": "Tagaytay City, Cavite",
+      "entrance_fee": 30,
+      "opening_hours": "7:00 AM - 6:00 PM",
+      "contact_number": null,
+      "category_id": 3,
+      "municipality_id": 1
+    }
