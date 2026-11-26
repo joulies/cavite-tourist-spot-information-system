@@ -1,0 +1,38 @@
+$kind: http-request
+name: Create Category
+method: POST
+url: '{{base_url}}/categories'
+order: 1000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "category_name": "Test Category",
+      "category_description": "A temporary category created during testing."
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status is 201 Created", function () {
+        pm.response.to.have.status(201);
+      });
+
+      pm.test("Response has category_id", function () {
+        const json = pm.response.json();
+        pm.expect(json).to.have.property("category_id");
+        pm.expect(json.category_id).to.be.a("number");
+      });
+
+      pm.test("category_name matches request", function () {
+        const json = pm.response.json();
+        pm.expect(json.category_name).to.eql("Test Category");
+      });
+
+      const json = pm.response.json();
+      if (json.category_id) {
+        pm.collectionVariables.set("test_category_id", json.category_id);
+      }

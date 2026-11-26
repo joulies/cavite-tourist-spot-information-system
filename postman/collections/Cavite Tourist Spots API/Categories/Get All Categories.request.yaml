@@ -1,0 +1,24 @@
+$kind: http-request
+name: Get All Categories
+method: GET
+url: '{{base_url}}/categories'
+order: 2000
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status is 200 OK", function () {
+        pm.response.to.have.status(200);
+      });
+
+      pm.test("Response is an array", function () {
+        pm.expect(pm.response.json()).to.be.an("array");
+      });
+
+      pm.test("Each category has required fields", function () {
+        const categories = pm.response.json();
+        categories.forEach(function (cat) {
+          pm.expect(cat).to.have.property("category_id");
+          pm.expect(cat).to.have.property("category_name");
+        });
+      });

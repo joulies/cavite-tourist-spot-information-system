@@ -1,0 +1,26 @@
+$kind: http-request
+name: Get Category by ID
+method: GET
+url: '{{base_url}}/categories/:id'
+order: 3000
+pathVariables:
+  - key: id
+    value: '{{test_category_id}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status is 200 OK", function () {
+        pm.response.to.have.status(200);
+      });
+
+      pm.test("Response has required fields", function () {
+        const json = pm.response.json();
+        pm.expect(json).to.have.property("category_id");
+        pm.expect(json).to.have.property("category_name");
+      });
+
+      pm.test("ID matches the requested category", function () {
+        const json = pm.response.json();
+        pm.expect(json.category_id).to.eql(Number(pm.collectionVariables.get("test_category_id")));
+      });
