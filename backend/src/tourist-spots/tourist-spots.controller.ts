@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { TouristSpotsService } from './tourist-spots.service';
 import { CreateTouristSpotDto } from './dto/create-tourist-spot.dto';
 import { UpdateTouristSpotDto } from './dto/update-tourist-spot.dto';
@@ -8,8 +19,8 @@ export class TouristSpotsController {
   constructor(private readonly touristSpotsService: TouristSpotsService) {}
 
   @Post()
-  create(@Body() createTouristSpotDto: CreateTouristSpotDto) {
-    return this.touristSpotsService.create(createTouristSpotDto);
+  create(@Body() dto: CreateTouristSpotDto) {
+    return this.touristSpotsService.create(dto);
   }
 
   @Get()
@@ -18,17 +29,21 @@ export class TouristSpotsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.touristSpotsService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.touristSpotsService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTouristSpotDto: UpdateTouristSpotDto) {
-    return this.touristSpotsService.update(+id, updateTouristSpotDto);
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateTouristSpotDto,
+  ) {
+    return this.touristSpotsService.update(id, dto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.touristSpotsService.remove(+id);
+  @HttpCode(HttpStatus.NO_CONTENT)
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.touristSpotsService.remove(id);
   }
 }
