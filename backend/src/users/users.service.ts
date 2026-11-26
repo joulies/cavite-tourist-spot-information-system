@@ -1,4 +1,9 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
@@ -52,23 +57,61 @@ export class UsersService {
     return user;
   }
 
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  async create(dto: CreateUserDto) {
+    const user = await this.register(dto);
+    return this.toSafeUser(user);
   }
 
   findAll() {
-    return `This action returns all users`;
+    return this.userRepository.find({
+      order: { full_name: 'ASC' },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: number, requesting_user_id: number) {
+    this.assertOwner(id, requesting_user_id);
+    return this.findProfile(id);
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(
+    id: number,
+    requesting_user_id: number,
+    dto: UpdateUserDto,
+  ) {
+    this.assertOwner(id, requesting_user_id);
+    const user = await this.findProfile(id);
+
+    if (dto.email && dto.email !== user.email) {
+      const existing = await this.userRepository.findOneBy({ email: dto.email });
+      if (existing) {
+        throw new ConflictException('Email is already registered.');
+      }
+    }
+
+    const { password, ...profileDetails } = dto;
+    Object.assign(user, profileDetails);
+    if (password) {
+      user.password = await bcrypt.hash(password, 12);
+    }
+
+    const updatedUser = await this.userRepository.save(user);
+    return this.toSafeUser(updatedUser);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: number, requesting_user_id: number) {
+    this.assertOwner(id, requesting_user_id);
+    const user = await this.findProfile(id);
+    await this.userRepository.remove(user);
+  }
+
+  private assertOwner(id: number, requesting_user_id: number) {
+    if (id !== requesting_user_id) {
+      throw new ForbiddenException('You can only access your own user record.');
+    }
+  }
+
+  private toSafeUser(user: User) {
+    const { password, ...safeUser } = user;
+    return safeUser;
   }
 }
