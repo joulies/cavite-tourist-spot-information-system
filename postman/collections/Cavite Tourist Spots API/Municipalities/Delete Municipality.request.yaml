@@ -1,8 +1,0 @@
-$kind: http-request
-name: Delete Municipality
-method: DELETE
-url: '{{base_url}}/municipalities/:id'
-order: 5000
-pathVariables:
-  - key: id
-    value: '1'

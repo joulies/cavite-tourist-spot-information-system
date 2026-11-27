@@ -1,5 +1,0 @@
-$kind: http-request
-name: Get Photo by ID
-method: GET
-url: '{{base_url}}/photos/1'
-order: 3000

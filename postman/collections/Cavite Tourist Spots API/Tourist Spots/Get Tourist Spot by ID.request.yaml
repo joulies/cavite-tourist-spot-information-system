@@ -1,5 +1,0 @@
-$kind: http-request
-name: Get Tourist Spot by ID
-method: GET
-url: '{{base_url}}/tourist-spots/1'
-order: 3000

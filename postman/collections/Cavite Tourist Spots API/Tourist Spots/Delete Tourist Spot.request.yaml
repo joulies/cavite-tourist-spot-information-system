@@ -1,5 +1,0 @@
-$kind: http-request
-name: Delete Tourist Spot
-method: DELETE
-url: '{{base_url}}/tourist-spots/1'
-order: 5000
